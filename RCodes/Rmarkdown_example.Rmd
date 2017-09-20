@@ -1,0 +1,62 @@
+---
+title: "California State University, Student Services Professional, Base Pay, 2015"
+author: "Cole Jower"
+date: "September 13, 2017"
+output: word_document
+---
+
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Overview
+
+This document shows the breakdown of how to graphically display the base pay salaries of student services professionals in the California State University system, using program R. To begin, we will identify our data frame in RStudio. 
+
+```{r CSU2015}
+CSU2015 = read.csv("../Data/california-state-university-2015.csv")
+```
+
+## Subsetting Student Services Professionals
+
+Once the dataframe is set, you will notice it contains several variables displayed as column headers, such as names, job titles and different types of pay (base, overtime, other, benefits, total). In order to display Student Services Professionals base pay salaries, we must first isolate certain variables by subsetting them. For this exercise we will subset only Student Service Professionals I-IV.
+
+
+```{r subset, echo=TRUE}
+SSPI = CSU2015[CSU2015$Job.Title == "STUDENT SERVICES PROFESSIONAL I",]
+
+SSPII = CSU2015[CSU2015$Job.Title == "STUDENT SERVICES PROFESSIONAL II",]
+
+SSPIII = CSU2015[CSU2015$Job.Title == "STUDENT SERVICES PROFESSIONAL III",]
+
+SSPIV = CSU2015[CSU2015$Job.Title == "STUDENT SERVICES PROFESSIONAL IV",]
+```
+
+## Bind Subsets to .csv
+
+After subsetting Student Services Professionals I-IV, we then will combine them into a .csv file using a function called rbind.  One thing to note however, is that this combined file (SSPALL) still contains data or levels from CSU2015.  In order to eliminate these data and isolate our target, we must also use a function called droplevels.
+
+```{r rbind, echo = TRUE}
+SSPALL = rbind(SSPI, SSPII, SSPIII, SSPIV)
+
+SSPALL = droplevels(SSPALL)
+```
+
+##       
+
+
+
+## Displaying results in a boxplot
+
+Finally after subsetting and binding our desired variables, we will then display them in a boxplot.
+To reiterate, these data are the Base Pay Salaries of Student Services Professionals I-IV.  
+Within the boxplot function, we will also display an abbreviation of each job title (ex. Student Services Professional I = SSPI), create a y-axis label (Base Pay in USD), change the color of the boxplots to green, and show the main title (CSU Student Services Professional Base Pay, 2015).
+
+```{r boxplot, echo = TRUE}
+boxplot(Base.Pay~Job.Title, data = SSPALL,
+        names = c("SSPI", "SSPII", "SSPIII", "SSPIV"),
+        ylab = "Base Pay in USD",
+        col = "green",
+        main = "CSU Student Services ProfessionalS I-IV:
+        Base Pay, 2015")
+```

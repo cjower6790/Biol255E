@@ -1,0 +1,67 @@
+
+x = 5 # my comment
+q = 5
+Q = 10
+q2= 234
+q3 = 102345
+
+# add two variables together
+q + q2
+myvector = c(1,20, 300, 40, 5, 0.6, 7.1, 8.23, 9.45,10.678, 11, 45, 103, 20, 20)
+myvector[3]
+
+myvector[1:3]
+myvector[myvector > 10]
+myvector[myvector == 20]
+
+
+length(myvector[myvector == 20])
+
+sd(myvector)
+
+mean(myvector)
+
+length (myvector[myvector >= 20])
+
+head(myvector)
+
+tail(myvector)
+
+df = read.csv(file.choose())
+
+str(df)
+
+df$Sex
+
+df[2.3]
+
+df$Snout.Vent.Length..mm.[(df$Snout.Vent.Length..mm. > 79.1) &
+                            (df$Snout.Vent.Length..mm. < 88.0)]
+
+df1 = read.csv(file.choose() )
+
+View(df1)
+
+output = vector(length = 0)
+
+for (i in 1:nrow(df1) ){
+  if(df1$Type[i] == "Min"){
+#print(df1$Value[i]) #still printing out
+  output = c(output, df1$Value[i])}} # appending onto output
+
+output
+
+mean(output)
+
+output2 = df1$Value[ df1$Type == "Min"]
+
+output2
+
+hist(df$Snout.Vent.Length..mm.)
+
+
+dotchart(df$Snout.Vent.Length..mm.,
+         groups = df$Sex, pch = 20, 
+         xlab = "Snout Vent Length", 
+         ylab = "Sex, Male or Female",
+         col = 'purple')
