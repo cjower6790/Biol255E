@@ -1,5 +1,9 @@
 # Stop keeping track of .docx files
 *.docx
+*.png
+*.rdx
+*.RData
+*.rdb
 
 # History files
 .Rhistory
