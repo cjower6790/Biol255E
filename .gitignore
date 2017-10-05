@@ -4,6 +4,7 @@
 *.rdx
 *.RData
 *.rdb
+*__packages
 
 # History files
 .Rhistory
@@ -38,3 +39,4 @@ vignettes/*.pdf
 # Temporary files created by R markdown
 *.utf8.md
 *.knit.md
+RCodes/Wk6.R

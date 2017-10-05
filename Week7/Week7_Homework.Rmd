@@ -1,0 +1,82 @@
+---
+title: "Week 7 Homework"
+author: "Cole Jower"
+date: "October 4, 2017"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Upload File
+```{r upload file}
+
+df= read.csv("../data/california-state-university-2015.csv")
+
+```
+
+## Convert file to characters
+``` {r convert to characters, results = "hide"}
+
+df$Employee.Name = as.character(df$Employee.Name)
+
+```
+
+## Find all entries with name 'Martinez'
+```{r Find all entries with name "Martinez", results = "hide"}
+
+df$Employee.Name[grepl(pattern = "Martinez", df$Employee.Name)]
+
+```
+
+## Everyone whose names starts with the letters 'Wil*'
+``` {r Everyone whose name starts with the letters "Wil*", results = "hide"}
+
+df$Employee.Name[grepl(pattern = "Wil", df$Employee.Name)]
+```
+
+## Everyone with a hyphenated name
+``` {r Everyone with a hyphenated name, results = "hide"}
+
+df$Employee.Name[grepl(pattern = "[[:alpha:]]-[[:alpha:]]", df$Employee.Name)]
+
+```
+
+## Everyone whose middle name is Paul
+``` {r Everyone whose middle name is Paul, results = "hide"}
+
+df$Employee.Name[grepl(pattern = "[[:blank:]]Paul[[:blank:]][[:alpha:]]", df$Employee.Name)]
+
+```
+
+## All people with the last name Martinez
+``` {r All people with the last name Martinez, results = "hide"}
+
+df$Employee.Name[grepl(pattern = "[[:alpha:]][[:blank:]]Martinez", df$Employee.Name)]
+
+```
+
+## All people with last name Martinez (but no hyphenated names)
+``` {r All people with last name Martinez (but no hyphenated names), results = "hide"}
+
+df$Employee.Name[grepl(pattern = "[[:blank:]]Martinez$", df$Employee.Name)]
+
+```
+
+## First name starts with E, has a middle initial, and last name is Martinez
+``` {r First name starts with E, has a middle initial, and last name is Martinez}
+
+ENames = df$Employee.Name[grepl(pattern = "^E", df$Employee.Name)]
+ENames[grepl(pattern = "[[:blank:]][[:alpha:]][[:blank:]]Martinez", ENames)]
+
+```
+
+## First name starts with E, has no middle initial, and last name is Martinez
+``` {r First name starts with E, has no middle initial, and last name is Martinez}
+
+Martinez = df$Employee.Name[grepl(pattern = "[[:space:]]Martinez$", df$Employee.Name)]
+Martinez[grepl(pattern = "^E", Martinez)]
+
+
+```
