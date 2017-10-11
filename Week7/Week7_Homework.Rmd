@@ -75,8 +75,7 @@ ENames[grepl(pattern = "[[:blank:]][[:alpha:]][[:blank:]]Martinez", ENames)]
 ## First name starts with E, has no middle initial, and last name is Martinez
 ``` {r First name starts with E, has no middle initial, and last name is Martinez}
 
-Martinez = df$Employee.Name[grepl(pattern = "[[:space:]]Martinez$", df$Employee.Name)]
-Martinez[grepl(pattern = "^E", Martinez)]
+df$Employee.Name[grepl(pattern = "^\\<E[a-z]*.\\sMartinez$", df$Employee.Name)]
 
 
 ```
