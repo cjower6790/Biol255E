@@ -1,0 +1,62 @@
+---
+title: "Week 8 HW"
+author: "Cole Jower"
+date: "October 16, 2017"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+``` {r importingFiles}
+
+fnames = dir("../data/temperature_trials",
+             pattern = "*.csv", 
+             full.names = TRUE)
+
+for (i in 1: length(fnames)){
+  # open each file in turn
+  temp = read.csv(fnames[i])
+  
+  loc= regexpr(pattern= "Trial[0-9]*", 
+               text= fnames[i])
+  
+  trialNumber = as.numeric(substr(fnames[i],
+                                  start = loc[[1]][1]+5, 
+                                  stop = loc[[1]][1] + attr(loc,'match.length')-1))
+  
+  temp$TrialNumber= trialNumber
+  
+  temp$DateTime = as.POSIXct(temp$DateTime, 
+                             origin = '1970-1-1', 
+                             tz = "UTC")
+  
+  temp$minutes = ''
+  
+  temp$minutes = difftime(temp$DateTime,
+                         temp$DateTime[1],
+                         tz = "UTC", 
+                         units = c("mins"))
+  
+  if (i ==1){
+    res = temp
+    plot(x= res$minutes, 
+         y= res$TC0, 
+         type = "l", 
+         xlim = c(0, 180), 
+         ylim = c(15, 35), 
+         main = "Channel TC0 for each Trial", 
+         xlab = "Elapsed Time, minutes", 
+         ylab= "Temperature, C", las= 1) 
+  } else {
+    points(x= temp$minutes, 
+           y= temp$TC0, 
+           type = "l", 
+           col= i)
+    res= rbind(res, temp)
+    
+  }
+}
+
+```
