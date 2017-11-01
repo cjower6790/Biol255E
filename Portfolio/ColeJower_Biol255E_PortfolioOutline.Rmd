@@ -95,14 +95,16 @@ write.csv(data.all, file = "Habitats_Transposed.csv")
 
 ## compare soil treatments
 ``` {r}
+
 ### Insert script here
 
 ```
 
 ## examine cover class and heights
 ```{r}
+
 ### Insert script here
 ### End product will be a histogram showing relative frequency of species occurence (y axis) by height class (x axis)
 ### Another histogram will examine relative frequency by height class, but only with species that fell within the require cover class 
-```
+
 ```

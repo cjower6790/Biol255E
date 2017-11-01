@@ -22,23 +22,28 @@ for (i in 1: length(fnames)){
   loc= regexpr(pattern= "Trial[0-9]*", 
                text= fnames[i])
   
+  # make trial number as numeric value
   trialNumber = as.numeric(substr(fnames[i],
                                   start = loc[[1]][1]+5, 
                                   stop = loc[[1]][1] + attr(loc,'match.length')-1))
   
   temp$TrialNumber= trialNumber
   
+  # convert DateTime to POSIX
   temp$DateTime = as.POSIXct(temp$DateTime, 
                              origin = '1970-1-1', 
                              tz = "UTC")
   
+  # create column for elapsed time (minutes)
   temp$minutes = ''
   
+  # calculate differences between trial times and put in "minutes" column
   temp$minutes = difftime(temp$DateTime,
                          temp$DateTime[1],
                          tz = "UTC", 
                          units = c("mins"))
   
+  # plot each trial 
   if (i ==1){
     res = temp
     plot(x= res$minutes, 

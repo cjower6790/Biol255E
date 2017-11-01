@@ -1,0 +1,103 @@
+---
+title: "Week 11"
+author: "Cole Jower"
+date: "November 1, 2017"
+output: 
+  word_document:
+    fig_caption: true
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r pressure, echo = FALSE}
+plot(pressure)
+```
+
+## Increasing the size of the image
+Adding a 'dpi= xxx' argument inside the chink header will create a larger png file
+`{r pressure2, dpi = 300}` will increase the file dimensiosn to roughly 1500x1200px (5" x 300dpi = 1500px).
+
+```{r pressure2, dpi = 300}
+plot(pressure, col = 'blue')
+```
+
+
+```{r pressure3, dpi = 300, fig.width=4, fig.height=7}
+plot(pressure)
+```
+
+```{r pressure4, dpi = 300, fig.width=7, fig.height=5, dev = c('png','pdf')}
+plot(pressure, col = 'red')
+```
+
+# ggplot2 tutorial
+
+```{r basicSetup, echo = TRUE}
+install.packages(ggplot2)
+library(ggplot2)
+diamonds = diamonds # make diamonds a data frame visible in the workspace
+```
+
+```{r layingOutbBasicPlot, fig.show='hide', echo = TRUE}
+ggplot(diamonds) # if only the dataset is known
+ggplot(diamonds, aes(x=carat)) # if only X-axis is known.  The Y-axis can be specified in respective geoms,
+ggplot(diamonds, aes(x=carat, y=price)) # if both X and Y axes are fixed for all layers.
+
+```
+
+The data don't appear on a plot until you use the `geom` argument to specify how the values should be represented.  For example, you might use 'geom_plot'
+
+```{r caratvscost, echo=TRUE, dpi=300}
+ggplot(diamonds, aes(x = carat, y = price))+ geom_point()
+```
+
+
+```{r dividebycut, echo=TRUE, dpi=300}
+ggplot(diamonds, aes(x = carat, y = price, color = cut))+ geom_point()
+# each category of the 'cut' variable will now have a distinct color, once a geom is added.
+```
+
+
+```{r addsmoothers, echo=TRUE, dpi=300}
+ggplot(diamonds, aes(x = carat, y = price, color = cut))+ geom_point()+geom_smooth()
+# adding scatterplot geom (layer1) and smoothing geom(layers2).
+```
+
+
+```{r singlesmoother, echo=TRUE, dpi=300}
+ggplot(diamonds, aes(x = carat, y = price))+ geom_point(aes(color=cut))+geom_smooth()
+
+```
+
+```{r shapevarybycolor, echo=TRUE, dpi = 300}
+ggplot(diamonds, aes(x=carat, y=price, color=cut, shape=color))+ geom_point()
+```
+
+## Bar charts
+
+```{r barchart1, echo=TRUE, dpi = 300}
+mtcars = mtcars
+ggplot(mtcars, aes(x=cyl)) + geom_bar() + labs(title='Frequency Bar chart')
+```
+
+```{r mpg3, echo=TRUE, dpi=300}
+# Box plot
+ggplot(mtcars, aes(x= factor(cyl), y = hp)) + stat_boxplot()
+       
+```
+
+``` {r mpg4, echo=TRUE, dpi = 300}
+
+#violin plot
+ggplot(mtcars, aes(x=factor(cyl), y =hp)) + geom_violin()
+
+```
+
+``` {r mpg5, echo=TRUE, dpi = 300}
+# dotplot (raw data_, jittered so points don't overlap)
+ggplot(mtcars, aes(x=factor(cyl), y = hp)) + geom_jitter(width = 0.1, height = 0,
+aes(color=factor(cyl)))
+```
