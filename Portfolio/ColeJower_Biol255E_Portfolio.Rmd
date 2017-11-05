@@ -1,0 +1,96 @@
+---
+title: "Portfolio"
+author: "Cole Jower"
+date: "November 4, 2017"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# For my portfolio, I will be using data from my work (San Francisco Bay Bird Observatory [SFBBO]).  This data was gathered using the Daubenmire cover class method at a restoration site in Alviso, known as pond A17.  This pond was formerly an industrial salt evaporation pond that was obtained by the Don Edwards National Wildlife Refuge, a part of the US Fish and Wildlife Service, and underwent a levee breach to return it tidal marsh.  As a part of the SFBBO habitat restoration program, we seeded and transplanted several species of native upland and transitional tidal marsh species in 30 mounds placed on old levee, and have been monitoring their recruitment at the site for nearly a year.  For my portfolio, my aim is to transpose the data in its current format to a long list format, and then analyze it to determine restoration success.  Part of success will be to determine if we have met refuge goals of continuous vegetation cover at a vegetation height of 30cm and greater.  In addition we want to determine which of our methods (if any) are more suitable for restoration.  In this regard we will look at different soil treatments at the restoration site, with 30 mounds that were either treated with straw or raking, with various types of soil including hybrid, compost, or organic.
+
+## Transpose Data
+``` {r TransposeData}
+
+# Install Packages
+install.packages("reshape2", dependencies = T) # only have to do this once
+
+
+# Manipulate Data
+library(reshape2)
+
+data.wide <- read.csv(file.choose(), stringsAsFactors = F, strip.white = T, na.strings = c(""))
+# A17June.csv
+
+head(data.wide)
+
+# extract just the top 9 lines
+heading <- data.wide[1:9,c(1,7:nrow(data.wide))]
+
+# transpose heading
+heading.t <- as.data.frame(t(heading), stringsAsFactors = F)
+cnames <- as.character(unlist(heading.t[1,]))
+heading.t <- heading.t[-1,]
+colnames(heading.t) <- cnames
+
+# extract data from row names
+heading.t$YYYYMMDD_TRANSECT_QUAD <- rownames(heading.t)
+heading.t$Date <- sapply(strsplit(heading.t$YYYYMMDD_TRANSECT_QUAD, split = "_", fixed = T),"[",1)
+heading.t$TransectCode <- sapply(strsplit(heading.t$YYYYMMDD_TRANSECT_QUAD, split = "_", fixed = T),"[",2)
+heading.t$QuadratID <- sapply(strsplit(heading.t$YYYYMMDD_TRANSECT_QUAD, split = "_", fixed = T),"[",3)
+
+heading.t$Date <- gsub("X", "", heading.t$Date, fixed = T)
+heading.t$Date <- as.Date(heading.t$Date, "%Y%m%d")
+
+heading.t <- heading.t[,-which(colnames(heading.t)=="Scientific Name")]
+
+# prepare the rest of the data sheet (other than the heading)
+
+body <- data.wide[10:nrow(data.wide),]
+colnames(body)[1:6] <- as.character(unlist(data.wide[9,1:6]))
+
+# remove columns that are entirely full of NA's
+body.t <- body[, unlist(lapply(body, function(x) !all(is.na(x))))]
+
+body.t <- melt(body, id = c("Scientific Name","Common Name","Code","Status","Grass/Forb","Annual/Perennial"), variable.name = "YYYYMMDD_TRANSECT_QUAD")
+body.t$Presence <- substr(body.t$value,1,1)
+body.t$HeightClass <- substr(body.t$value,2,2)
+
+# merge the heading part with the body part
+
+data.all <- merge(heading.t, body.t[,-which(colnames(body.t)=="value")], by = "YYYYMMDD_TRANSECT_QUAD", all = T)
+
+# subset out remaing NAs to only get rows with data
+
+final.data <- subset(data.all, Presence!="NA" )
+
+final.data <- subset(final.data, select = -YYYYMMDD_TRANSECT_QUAD)
+
+# export the columns of interest to a csv
+
+write.csv(final.data, file = "A17June_Transposed.csv") #change the output name as desired
+
+```
+
+# Compare status (Native vs. Weed presence) and Height Class
+``` {r NativeVsWeedHeightClass}
+# Open .csv
+A17 <- read.csv('../Portfolio/A17June_Transposed.csv')
+
+# Create contingency table comparing status (native or weed) versus height class
+StatusVSHeight <- table(A17$Status, A17$HeightClass)
+NativeVsWeed<- as.data.frame.matrix(StatusVSHeight)
+
+# Calculate relative frequency
+RelFreqNVW <-(NativeVsWeed/nrow(A17))*100
+
+# Convert table to numeric
+NatVsWeedHeight <- data.matrix (RelFreqNVW)
+
+# Create side-by-side relative frequency graph
+barplot(NatVsWeedHeight, ylab = "Frequency", xlab = "Height Class", main = "Native vs Weed Presence, Height Class", col=c("lightblue", "Orange"), beside = TRUE, width = .3)
+
+
+```
