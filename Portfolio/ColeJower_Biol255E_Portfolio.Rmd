@@ -1,7 +1,7 @@
 ---
-title: "Portfolio, Update 3.0"
+title: "Portfolio, Final"
 author: "Cole Jower"
-date: "November 29, 2017"
+date: "December 7, 2017"
 output: word_document
 ---
 
@@ -10,13 +10,14 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Portfolio Description
-For my portfolio, I will be using data from my work (San Francisco Bay Bird Observatory [SFBBO]).  This data was gathered using the Daubenmire cover class method at a restoration site in Alviso, known as pond A17.  This pond was formerly an industrial salt evaporation pond, obtained by the Don Edwards National Wildlife Refuge, a part of the US Fish and Wildlife Service, and underwent a levee breach to return it tidal marsh.  As a part of the SFBBO habitat restoration program, we seeded and transplanted several species of native upland and transitional tidal marsh species in 30 mounds placed on old levee, and have been monitoring their recruitment at the site for nearly a year.  For my portfolio, my aim is to transpose the data in its current format to a long list format, and then analyze it to determine restoration success.  For this project, I will only be examining the month of June (for 2017), a time deemed appropriate due to the high presence of an invasive weed, slenderleaf iceplant (Mesembryanthemum nodiflorum). Thus, native plant performance (determined by relative frequency) will be examined in the presence of a persistent and invasive weed. Success will be to determine if we have met refuge goals of continuous vegetation cover (common presence) at a vegetation height of 30cm and greater.  In addition we want to determine which of our methods (if any) are more suitable for restoration.  In this regard we will look at different soil treatments at the restoration site, with 30 mounds that were trop dressed with compost, hybrid, or organic soils, at varying depths (1, 2, or 3 inches).  In summary, my output will contain three sets of histograms with the following information:
+For my portfolio, I will be using data from my work (San Francisco Bay Bird Observatory [SFBBO]).  This data was gathered using the Daubenmire cover class method at a restoration site in Alviso, known as pond A17.  This pond was formerly an industrial salt evaporation pond, obtained by the Don Edwards National Wildlife Refuge, a part of the US Fish and Wildlife Service, and underwent a levee breach to return it tidal marsh.  As a part of the SFBBO habitat restoration program, we seeded and transplanted several species of native upland and transitional tidal marsh species in 30 mounds placed on old levee, and have been monitoring their recruitment at the site for nearly a year.  For my portfolio, my aim is to transpose the data in its current format to a long list format, and then analyze it to determine restoration success.  For this project, I will only be examining the month of June (for 2017), a time deemed appropriate due to the high presence of an invasive weed, slenderleaf iceplant (Mesembryanthemum nodiflorum). Thus, native plant performance (determined by relative frequency) will be examined in the presence of a persistent and invasive weed.  In this case, relative frequency is defined by the number of times a condition occurs in a sample, divided by the total number of samples.  For instance, this could be the number of quadrats (samples) that a native species in a certain height class occurred in, divided by the total number of quadrats.  Success will be to determine if we have met refuge goals of continuous vegetation cover ("Common"" presence) at a vegetation height of 30cm and greater.  In addition we want to determine which of our methods (if any) are more suitable for restoration.  In this regard we will look at different soil treatments at the restoration site, with 30 mounds that were trop dressed with compost, hybrid, or organic soils, at varying depths (1, 2, or 3 inches).  In summary, my output will contain three sets of histograms with the following information:
 
 1) Compare Native and Weed presence by height class (which is structurally more dominant?)
 
 2) Examine Native and Weed canopy presence by heights class (are present Natives reaching refuge goals?)
 
-3) Examine native species relative frequency relative to soil depth and material (do certain treatments work better than others?)
+3) Examine native species relative frequency compared to soil depth and material (do certain treatments work better than others?)
+
 
 ## Transpose Data
 ``` {r TransposeData, results = "hide"}
@@ -96,7 +97,7 @@ RelFreqNVW <-(NativeVsWeed/nrow(A17))*100
 NatVsWeedHeight <- data.matrix (RelFreqNVW)
 
 # Create side-by-side relative frequency graph
-barplot(NatVsWeedHeight, ylab = "Relative Frequency", xlab = "Height Class", main = "Native/Weed Presence by Height Class", col=c("lightblue", "Orange"),names.arg=c("1 (<30cm)", "2 (30-45cm)","3 (45-60cm)","4 (>60cm)"), beside = TRUE, width = .3, legend = rownames(NatVsWeedHeight), cex.names = 0.75)
+barplot(NatVsWeedHeight, ylab = "Relative Frequency", xlab = "Height Class", main = "Native/Weed Presence by Height Class", ylim = c(0,60), col=c("lightblue", "Orange"),names.arg=c("1 (<30cm)", "2 (30-45cm)","3 (45-60cm)","4 (>60cm)"), beside = TRUE, width = .3, legend = rownames(NatVsWeedHeight), cex.names = 0.75)
 
 
 ```
@@ -152,111 +153,71 @@ barplot(RRF.Num, ylab = "Relative Frequency", xlab = "Height Class", main = "Rar
 # Subset native species
 Natives = A17[A17$Status == "Native",]
 
-# Native presence by Compost, 1 inch
+# Native presence in Compost by Soil Depth
 NativeCompost = Natives[Natives$Material == "Compost",]
-NativeCompost1 = NativeCompost[NativeCompost$Soil.Depth == "1",]
+NativeCompost <- subset(NativeCompost, Presence!="NA" )
+NativeCompost$Soil.Depth <- as.factor(NativeCompost$Soil.Depth)
 
-NC1 <- table(NativeCompost1$Status, NativeCompost1$Presence)
-NC1Table <- as.data.frame.matrix(NC1[,c(2,3,1)])
+NCTable <- table(NativeCompost$Soil.Depth, NativeCompost$Presence)
+NCTable <- as.data.frame.matrix(NCTable)
+Compost <- (NCTable/nrow(NativeCompost))*100
+Compost <- as.matrix(Compost[,c(2,3,1)])
 
-NC1Freq <- (NC1Table/nrow(NativeCompost1))*100
-NC1RelFreq <-as.matrix(NC1Freq)
-
-# Native presence by Compost, 2 inch
-NativeCompost2 = NativeCompost[NativeCompost$Soil.Depth == "2",]
-
-NC2 <- table(NativeCompost2$Status, NativeCompost2$Presence)
-NC2Table <- as.data.frame.matrix(NC2[,c(2,3,1)])
-
-NC2Freq <- (NC2Table/nrow(NativeCompost2))*100
-NC2RelFreq <- as.matrix(NC2Freq)
-
-# Native presence by Compost, 3 inch
-NativeCompost3 = NativeCompost[NativeCompost$Soil.Depth == "3",]
-
-NC3 <- table(NativeCompost3$Status, NativeCompost3$Presence)
-NC3Table <- as.data.frame.matrix(NC3[,c(2,3,1)])
-
-NC3Freq <- (NC3Table/nrow(NativeCompost3))*100
-NC3RelFreq <- as.matrix(NC3Freq)
-
-# Combine all compost graphs into one 
-NCALL = rbind(NC1RelFreq, NC2RelFreq, NC3RelFreq)
-
-###################################################################################
-
-
-# Native presence by Hybird, 1 inch
+# Native presence in Hybrid by Soil Depth
 NativeHybrid = Natives[Natives$Material == "Hybrid",]
-NativeHybrid1 = NativeHybrid[NativeHybrid$Soil.Depth == "1",]
+NativeHybrid <- subset(NativeHybrid, Presence!="NA" )
+NativeHybrid$Soil.Depth <- as.factor(NativeHybrid$Soil.Depth)
 
-NH1 <- table(NativeHybrid1$Status, NativeHybrid1$Presence)
-NH1Table <- as.data.frame.matrix(NH1[,c(2,3,1)])
+NHTable <- table(NativeHybrid$Soil.Depth, NativeHybrid$Presence)
+NHTable <- as.data.frame.matrix(NHTable)
+Hybrid <- (NHTable/nrow(NativeHybrid))*100
+Hybrid <- as.matrix(Hybrid[,c(2,3,1)])
 
-NH1Freq <- (NH1Table/nrow(NativeHybrid1))*100
-NH1RelFreq <-as.matrix(NH1Freq)
-
-# Native presence by Hybrid, 2 inch
-NativeHybrid2 = NativeHybrid[NativeHybrid$Soil.Depth == "2",]
-
-NH2 <- table(NativeHybrid2$Status, NativeHybrid2$Presence)
-NH2Table <- as.data.frame.matrix(NH2[,c(2,3,1)])
-
-NH2Freq <- (NH2Table/nrow(NativeHybrid2))*100
-NH2RelFreq <- as.matrix(NH2Freq)
-
-# Native presence by Hybrid, 3 inch
-NativeHybrid3 = NativeHybrid[NativeHybrid$Soil.Depth == "3",]
-
-NH3 <- table(NativeHybrid3$Status, NativeHybrid3$Presence)
-NH3Table <- as.data.frame.matrix(NH3[,c(2,3,1)])
-
-NH3Freq <- (NH3Table/nrow(NativeHybrid3))*100
-NH3RelFreq <- as.matrix(NH3Freq)
-
-# Combine all Hybrid graphs into one 
-NHALL = rbind(NH1RelFreq, NH2RelFreq, NH3RelFreq)
-
-###################################################################################
-
-# Native Organic, 1 inch
+#Native presence in Organic by Soil Depth
 NativeOrganic = Natives[Natives$Material == "Organic",]
-NativeOrganic1 = NativeOrganic[NativeOrganic$Soil.Depth == "1",]
+NativeOrganic <- subset(NativeOrganic, Presence!="NA" )
+NativeOrganic$Soil.Depth <- as.factor(NativeOrganic$Soil.Depth)
 
-NO1 <- table(NativeOrganic1$Status, NativeOrganic1$Presence)
-NO1Table <- as.data.frame.matrix(NO1[,c(2,3,1)])
+NOTable <- table(NativeOrganic$Soil.Depth, NativeOrganic$Presence)
+NOTable <- as.data.frame.matrix(NOTable)
+Organic <- (NOTable/nrow(NativeOrganic))*100
+Organic <- as.matrix(Organic[,c(2,3,1)])
 
-NO1Freq <- (NO1Table/nrow(NativeOrganic1))*100
-NO1RelFreq <-as.matrix(NO1Freq)
+# Create relative frequency barplot
+par(mfrow=c(3,1),mar = c(1.75, 1.75, 1.75, 1.75) + 0.1) 
+barplot(Compost, 
+        ylab = "Relative Frequency", 
+        main = "Compost, Native Species by Cover Class", 
+        col = c("blue", "green", "red"), 
+        names.arg=c("Rare (0-5%)","Uncommon (5-33%)","Common (33-100%)"), 
+        beside = TRUE, 
+        width = .3, 
+        ylim = c(0,50),
+        legend = rownames(Compost), 
+        args.legend=list(title="Soil Depth in Inches"))
+barplot(Hybrid, 
+        ylab = "Relative Frequency", 
+        main = "Hybrid, Native Species by Cover Class", 
+        col = c("blue", "green", "red"), 
+        names.arg=c("Rare (0-5%)","Uncommon (5-33%)","Common (33-100%)"), 
+        beside = TRUE, 
+        width = .3, 
+        ylim = c(0,50),
+        legend = rownames(Compost), 
+        args.legend=list(title="Soil Depth in Inches"))
+barplot(Organic, 
+        ylab = "Relative Frequency", 
+        xlab = "Cover Class", 
+        main = "Organic, Native Species by Cover Class", 
+        col = c("green", "red"), 
+        names.arg=c("Rare (0-5%)","Uncommon (5-33%)","Common (33-100%)"), 
+        beside = TRUE, 
+        width = .3,
+        ylim = c(0,50),
+        legend = rownames(Organic), 
+        args.legend=list(title="Soil Depth in Inches"))
 
-# Native presence by Organic, 2 inch
-NativeOrganic2 = NativeOrganic[NativeOrganic$Soil.Depth == "2",]
 
-NO2 <- table(NativeOrganic2$Status, NativeOrganic2$Presence)
-NO2Table <- as.data.frame.matrix(NO2[,c(2,3,1)])
-
-NO2Freq <- (NO2Table/nrow(NativeOrganic2))*100
-NO2RelFreq <- as.matrix(NO2Freq)
-
-# Native presence by Organic, 3 inch
-NativeOrganic3 = NativeOrganic[NativeOrganic$Soil.Depth == "3",]
-
-NO3 <- table(NativeOrganic3$Status, NativeOrganic3$Presence)
-NO3Table <- as.data.frame.matrix(NO3[,c(2,3,1)])
-
-NO3Freq <- (NO3Table/nrow(NativeOrganic3))*100
-NO3RelFreq <- as.matrix(NO3Freq)
-
-# Combine all organic graphs into one 
-NOALL = rbind(NO1RelFreq, NO2RelFreq, NO3RelFreq)
-
-# Create histograms
-par(mfrow=c(3,1),mar = c(2, 2, 2, 2) + 0.1) 
-barplot(NCALL, ylab = "Relative Frequency", main = "Compost, Native Species by Cover Class", col = c("blue", "green", "red"), names.arg=c("Rare (0-5%)","Uncommon (5-33%)","Common (33-100%)"), beside = TRUE, width = .3, ylim = c(0,60))
-barplot(NHALL, ylab = "Relative Frequency", main = "Hybrid, Native Species by Cover Class", col = c("blue", "green", "red"), names.arg=c("Rare (0-5%)","Uncommon (5-33%)","Common (33-100%)"), beside = TRUE, width = .3, ylim = c(0,60))
-barplot(NOALL, ylab = "Relative Frequency", xlab = "Cover Class", main = "Organic, Native Species by Cover Class", col = c("blue", "green", "red"), names.arg=c("Rare (0-5%)","Uncommon (5-33%)","Common (33-100%)"), beside = TRUE, width = .3)
-
-### Need to add legend for soil depths ###
 ```
 
-#### One meter look around against height for all months, as well as september
+
