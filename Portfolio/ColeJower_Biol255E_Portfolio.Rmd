@@ -20,7 +20,7 @@ For my portfolio, I will be using data from my work (San Francisco Bay Bird Obse
 
 
 ## Transpose Data
-``` {r TransposeData, results = "hide"}
+``` {r TransposeData, echo = TRUE, results = "hide"}
 
 # Install Packages
 install.packages("reshape2", dependencies = T, repos = "http://cran.us.r-project.org") # only have to do this once
@@ -78,7 +78,7 @@ write.csv(final.data, file = "A17June_Transposed.csv")
 
 ```
 
-```{r read.csv}
+```{r read.csv, echo = TRUE}
 # Open .csv
 A17 <- read.csv('../Portfolio/A17June_Transposed.csv')
 ```
@@ -103,7 +103,7 @@ barplot(NatVsWeedHeight, ylab = "Relative Frequency", xlab = "Height Class", mai
 ```
 
 # 2) Examine Native and Weed canopy presence by heights class
-``` {r CommonPresencebyHeights}
+``` {r CommonPresencebyHeights, echo = TRUE}
 
 # Subset all presence by Common
 C.Presence <- subset(A17, Presence == "C")
@@ -148,7 +148,7 @@ barplot(RRF.Num, ylab = "Relative Frequency", xlab = "Height Class", main = "Rar
 ```
 
 # 3) Examine native species relative frequency relative to soil depth and material
-``` {r Depth&MaterialVSCoverClass}
+``` {r Depth&MaterialVSCoverClass, echo = TRUE}
 
 # Subset native species
 Natives = A17[A17$Status == "Native",]
